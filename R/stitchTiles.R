@@ -44,14 +44,8 @@ stitchTiles = function(renameAndOrderOutput = renameAndOrderOutput, imageJPath =
 
       }
 
-
-
-
-
     }
 
   file.copy(file.path("2_renameAndOrderTiles", "output", "renameAndOrderOutput.rds"), file.path("3_stitchedTiles", "renameAndOrderOutput.rds"))
   unlink(file.path("2_renameAndOrderTiles", "output", "renameAndOrderOutput.rds"))
-
-
 }
