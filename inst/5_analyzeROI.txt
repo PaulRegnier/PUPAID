@@ -1,0 +1,181 @@
+// c1 = red, c2 = green, c3 = blue, c4 = gray, c5 = cyan, c6 = magenta, c7 = yellow
+
+// Format for each stack: MARKER_COLOR_CHANNEL (ex: CTLA4_Cy3_c1 or CTLA4_Opal520_c1)
+
+list = getList("window.titles");
+
+for (i = 0; i < list.length; i++)
+{
+	winame = list[i];
+    selectWindow(winame);
+    run("Close");
+}
+
+run("Close All");
+	 
+var FilesInFolder = getFileList(FolderToUse + "/input");
+
+var FileToImport = FilesInFolder[0];
+
+inputPath = FolderToUse + "/input/" + FileToImport;
+
+run("Bio-Formats Importer", "open=[" + inputPath + "] autoscale color_mode=Composite view=Hyperstack stack_order=XYCZT"); 
+
+run("Stack to Images");
+
+
+listImages = getList("image.titles");
+
+for (i = 0; i < listImages.length; i++)
+{
+    winame = listImages[i];
+    selectWindow(winame);
+	
+	run("16-bit");
+	
+   Dialog.create("Rename Image");
+  Dialog.addString("Title:", winame, 50);
+  
+  Dialog.show();
+  
+  title = Dialog.getString();
+  wait(200);
+  selectWindow(winame);
+  wait(200);
+  rename(title);
+  run("Apply LUT");
+
+}
+
+listImagesRenamed = getList("image.titles");
+Dialog.create("Please choose a nuclear staining");
+Dialog.addChoice("Nuclear staining (DAPI-like)", listImagesRenamed);
+Dialog.show();
+
+nucleusStaining = Dialog.getChoice();
+
+wait(200);
+
+selectWindow(nucleusStaining);
+
+run("Subtract Background...", "rolling=50");
+//run("Enhance Contrast", "saturated=0.1");
+run("Enhance Local Contrast (CLAHE)", "blocksize=30 histogram=256 maximum=3 mask=*None* fast_(less_accurate)");
+run("Apply LUT");
+
+run("Duplicate...", " ");
+run("Duplicate...", " ");
+selectWindow(nucleusStaining + "-1");
+
+//run("Mean...", "radius=5");
+run("Gaussian Blur...", "sigma=" + SigmaLow);
+selectWindow(nucleusStaining + "-2");
+//run("Mean...", "radius=10");
+run("Gaussian Blur...", "sigma=" + SigmaHigh);
+
+imageCalculator("Subtract create", nucleusStaining + "-1", nucleusStaining + "-2");
+selectWindow("Result of " + nucleusStaining + "-1");
+rename("BackgroundSubtracted_" + nucleusStaining);
+
+
+setAutoThreshold("Default dark");
+
+
+
+run("Convert to Mask");
+run("Fill Holes");
+//run("Options...", "iterations=5 count=3");
+run("Options...", "iterations=1 count=1");
+run("Dilate");
+run("Options...", "iterations=1 count=1");
+run("Watershed");
+
+
+run("Set Measurements...", "area mean integrated display redirect=None decimal=3");
+
+run("Analyze Particles...", "display exclude clear add");
+//run("Analyze Particles...", "size=10-150 circularity=0.25-1.00 display exclude clear add");
+
+close(nucleusStaining + "-1");
+close(nucleusStaining + "-2");
+selectWindow("BackgroundSubtracted_" + nucleusStaining);
+rename(nucleusStaining + "-mask");
+
+
+listImagesRenamedToTreat = Array.delete(listImagesRenamed, nucleusStaining);
+
+
+for(i = 0; i < listImagesRenamedToTreat.length; i++)
+{
+	selectWindow(listImagesRenamedToTreat[i]);
+	
+	
+	run("Subtract Background...", "rolling=50");
+	//run("Enhance Contrast", "saturated=0.1");
+	
+	run("Enhance Local Contrast (CLAHE)", "blocksize=30 histogram=256 maximum=3 mask=*None* fast_(less_accurate)");
+	
+	run("Apply LUT");
+	
+}
+
+selectWindow(nucleusStaining + "-mask");
+
+waitForUser("Before performing actual measurements, please add on the " + nucleusStaining + "-mask window a new region of interest using any appropriated tool.\nDo not forget to add this region to the ROI Manager.\nThis region must be devoid of any signal of any color as it will serve as blank background control to further compute CTCF (Corrected Total Cell Fluorescence).\nUse now any appropriated tool to determine the blank background to use and add it to the ROI Manager.\nWhen finished, please click on the OK button to continue.");
+
+var options = "";
+
+for(i = 0; i < listImagesRenamed.length; i++)
+{
+	var currentImage = listImagesRenamed[i];
+	currentImageColor = replace(currentImage, "(.+)_(.+)_(.+)", "$3");
+	
+	run("Clear Results");
+	run("Set Measurements...", "area mean integrated centroid shape display redirect=&currentImage decimal=3");
+	roiManager("Measure");
+	saveAs("Results", FolderToUse + "/output/quantification_" + currentImage + "_" + FileToImport + ".tsv");
+	
+	options = options + " " + currentImageColor + "=" + currentImage;
+}
+
+roiManager("Deselect");
+roiManager("Save", FolderToUse + "/output/" + FileToImport + "_ROI-set.zip");
+
+if(listImagesRenamed.length <= 7)
+{
+	run("Merge Channels...", options + " create");
+	run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_corrected_composite.tif" + "] compression=LZW");
+
+	run("RGB Color");
+	run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_corrected_RGB.tif" + "] compression=LZW");
+
+} else
+{
+
+	for(i = 0; i < listImagesRenamed.length; i++)
+	{
+		var currentImage = listImagesRenamed[i];
+		selectWindow(currentImage);
+		run("RGB Color");
+		run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_" + currentImage + "_corrected_RGB.tif" + "] compression=LZW");
+	}
+
+}
+
+
+run("Clear Results");
+run("Set Measurements...", "area display redirect=None decimal=3");
+waitForUser("Now, please use any appropriate tool to determine either the total tissue area or all the areas that are not part of the object to analyze.\nThen, measure and note them down to further apply the appropriate calculation. Click on the OK button once you are done.");
+
+list = getList("window.titles");
+
+for (i = 0; i < list.length; i++)
+{
+    winame = list[i];
+    selectWindow(winame);
+    run("Close");
+} 
+
+run("Close All");
+
+run("Quit");

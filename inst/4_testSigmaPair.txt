@@ -1,0 +1,91 @@
+// c1 = red, c2 = green, c3 = blue, c4 = gray, c5 = cyan, c6 = magenta, c7 = yellow
+
+// Format for each stack: MARKER_COLOR_CHANNEL (ex: CTLA4_Cy3_c1 or CTLA4_Opal520_c1)
+
+list = getList("window.titles");
+
+for (i = 0; i < list.length; i++)
+{
+	winame = list[i];
+    selectWindow(winame);
+    run("Close");
+}
+
+run("Close All");
+	 
+var FilesInFolder = getFileList(FolderToUse + "/input");
+
+var FileToImport = FilesInFolder[0];
+
+inputPath = FolderToUse + "/input/" + FileToImport;
+
+run("Bio-Formats Importer", "open=[" + inputPath + "] autoscale color_mode=Composite view=Hyperstack stack_order=XYCZT"); 
+
+wait(200);
+
+var imageName = "Image"
+
+rename(imageName);
+
+run("16-bit");
+
+run("Subtract Background...", "rolling=50");
+//run("Enhance Contrast", "saturated=0.1");
+run("Enhance Local Contrast (CLAHE)", "blocksize=30 histogram=256 maximum=3 mask=*None* fast_(less_accurate)");
+run("Apply LUT");
+
+run("Duplicate...", " ");
+run("Duplicate...", " ");
+selectWindow(imageName + "-1");
+
+//run("Mean...", "radius=5");
+run("Gaussian Blur...", "sigma=" + SigmaLow);
+selectWindow(imageName + "-2");
+//run("Mean...", "radius=10");
+run("Gaussian Blur...", "sigma=" + SigmaHigh);
+
+imageCalculator("Subtract create", imageName + "-1", imageName + "-2");
+selectWindow("Result of " + imageName + "-1");
+rename("BackgroundSubtracted_" + imageName);
+
+
+setAutoThreshold("Default dark");
+
+
+
+run("Convert to Mask");
+run("Fill Holes");
+//run("Options...", "iterations=5 count=3");
+run("Options...", "iterations=1 count=1");
+run("Dilate");
+run("Options...", "iterations=1 count=1");
+run("Watershed");
+
+
+run("Set Measurements...", "area mean integrated display redirect=None decimal=3");
+
+run("Analyze Particles...", "display exclude clear add");
+//run("Analyze Particles...", "size=10-150 circularity=0.25-1.00 display exclude clear add");
+
+close(imageName + "-1");
+close(imageName + "-2");
+selectWindow("BackgroundSubtracted_" + imageName);
+rename(imageName + "-mask");
+
+selectWindow(imageName);
+roiManager("Show All without labels");
+run("Flatten");
+run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_sigmaLow=" + SigmaLow + "_sigmaHigh=" + SigmaHigh + ".tif" + "] compression=LZW");
+
+list = getList("window.titles");
+
+for (i = 0; i < list.length; i++)
+{
+    winame = list[i];
+    selectWindow(winame);
+    run("Close");
+} 
+
+run("Close All");
+
+run("Quit");

@@ -1,0 +1,21 @@
+Package: PUPAID
+Title: PUPAID: a pipeline for automated processing and analysis of immunofluorescence data
+Version: 1.0
+Authors@R: 
+    person("Paul", "Régnier", , "paul.regnier@aphp.fr", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-9713-1132"))
+Description: PUPAID (Pipeline for Unleashed Processing and Analysis of Immunofluorescence Data) is a R- + ImageJ-written workflow dedicated to the processing and analysis of immunofluorescence-based data. It contains all the necessary functions and packages to go from data automated pre-processing to analysis, presented in a user-friendly and easy-to-use fashion.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+	foreach,
+	flowCore,
+	data.table,
+	Biobase,
+	methods
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

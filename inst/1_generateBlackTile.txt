@@ -1,0 +1,46 @@
+list = getList("window.titles");
+
+for (i = 0; i < list.length; i++)
+{
+	winame = list[i];
+    selectWindow(winame);
+    run("Close");
+}
+
+run("Close All");
+	 
+var FilesInFolder = getFileList(FolderToUse + "/1_generateBlackTile/input");
+
+var FileToImport = FilesInFolder[0];
+
+inputPath = FolderToUse + "/1_generateBlackTile/input/" + FileToImport;
+
+run("Bio-Formats Importer", "open=[" + inputPath + "] autoscale color_mode=Composite view=Hyperstack stack_order=XYCZT"); 
+
+listImages = getList("image.titles");
+
+
+
+var winame = listImages[0];
+
+selectWindow(winame);
+
+getDimensions(width, height, channelCount, sliceCount, frameCount);
+
+for (i = 0; i < channelCount; i++)
+{
+    run("Select All");
+	setBackgroundColor(0, 0, 0);
+	run("Clear", "slice");
+  
+  run("Next Slice [>]");
+
+
+}
+
+FileToExport = replace(FileToImport, "\\.tif", "")
+
+//run("Bio-Formats Exporter", "save=[" + FolderToUse + "/1_generateBlackTile/output/" + FileToExport + "_blackTile.tif" + "] compression=LZW");
+run("Bio-Formats Exporter", "save=[" + FolderToUse + "/1_generateBlackTile/output/blackTile.tif" + "] compression=LZW");
+
+run("Close All");
