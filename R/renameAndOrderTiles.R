@@ -15,6 +15,9 @@
 renameAndOrderTiles = function(AOI_x, AOI_y)
 {
 
+  AOI_x = round(AOI_x)
+  AOI_y = round(AOI_y)
+
   a = NULL
   b = NULL
 
@@ -47,8 +50,7 @@ renameAndOrderTiles = function(AOI_x, AOI_y)
         coordinates[a, "tile_x"] = 1
         coordinates[a, "tile_y"] = 1
 
-      }
-      else
+      } else
       {
         globalRatiosX = (currentX - coordinates[coordinates$ROI > 0, "x"])/AOI_x
 
@@ -62,6 +64,7 @@ renameAndOrderTiles = function(AOI_x, AOI_y)
           roundRatiosY_ID = which(globalRatiosY == round(globalRatiosY))
 
           associatedData = coordinates[roundRatiosX_ID, ]
+
           associatedData$ratioX = globalRatiosX[roundRatiosX_ID]
           associatedData$ratioY = globalRatiosY[roundRatiosY_ID]
 

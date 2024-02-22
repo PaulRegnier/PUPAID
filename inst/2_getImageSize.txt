@@ -1,0 +1,36 @@
+list = getList("window.titles");
+
+for (i = 0; i < list.length; i++)
+{
+  winame = list[i];
+  selectWindow(winame);
+  run("Close");
+}
+
+run("Close All");
+
+var FilesInFolder = getFileList(FolderToUse + "/1_generateBlackTile/input");
+
+var FileToImport = FilesInFolder[0];
+
+inputPath = FolderToUse + "/1_generateBlackTile/input/" + FileToImport;
+
+run("Bio-Formats Importer", "open=[" + inputPath + "] autoscale color_mode=Composite view=Hyperstack stack_order=XYCZT");
+
+listImages = getList("image.titles");
+
+
+
+var winame = listImages[0];
+
+selectWindow(winame);
+
+getPixelSize(unit, pixelWidth, pixelHeight);
+
+var imageWidth = pixelWidth*getWidth();
+var imageHeight = pixelHeight*getHeight();
+
+run("Close All");
+
+print(imageWidth);
+print(imageHeight);

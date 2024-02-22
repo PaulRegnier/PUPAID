@@ -2,7 +2,6 @@
 #'
 #' This function merges every TSV file found in the `5_analyzeROI > output` directory into a single FCS file. This FCS file could be directly used in standard flow cytometry analysis softwares such as FlowJo, Kaluza or others.
 #'
-#'
 #' @importFrom foreach %do%
 #'
 #' @export
@@ -20,6 +19,7 @@ mergeTSVtoFCS = function()
     {
       currentFileToOpen = filesToImport[a]
       currentFileData = data.table::fread(file.path("5_analyzeROI", "output", currentFileToOpen), sep = "\t")
+
       totalData[[a]] = currentFileData
       names(totalData)[a] = currentFileToOpen
     }
@@ -105,6 +105,7 @@ mergeTSVtoFCS = function()
 
 
   # a flowFrame is the internal representation of a FCS file
+  methods::getClassDef(Class = "flowFrame", package = "flowCore")
   finalData_flowframe = methods::new("flowFrame", exprs = finalTotalData, parameters = Biobase::AnnotatedDataFrame(meta))
   finalFCS_filename = gsub("([^.]+)\\.(.+)", "\\1", currentFileSample)
 

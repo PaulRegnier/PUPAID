@@ -23,6 +23,8 @@ run("Bio-Formats Importer", "open=[" + inputPath + "] autoscale color_mode=Compo
 
 wait(200);
 
+getVoxelSize(width, height, depth, unit);
+
 var imageName = "Image"
 
 rename(imageName);
@@ -74,7 +76,12 @@ rename(imageName + "-mask");
 
 selectWindow(imageName);
 roiManager("Show All without labels");
+roiManager("Save", FolderToUse + "/output/" + FileToImport + "_sigmaLow=" + SigmaLow + "_sigmaHigh=" + SigmaHigh + "_ROISet.zip");
 run("Flatten");
+
+setVoxelSize(width, height, depth, unit);
+
+
 run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_sigmaLow=" + SigmaLow + "_sigmaHigh=" + SigmaHigh + ".tif" + "] compression=LZW");
 
 list = getList("window.titles");

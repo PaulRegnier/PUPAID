@@ -21,6 +21,9 @@ inputPath = FolderToUse + "/input/" + FileToImport;
 
 run("Bio-Formats Importer", "open=[" + inputPath + "] autoscale color_mode=Composite view=Hyperstack stack_order=XYCZT"); 
 
+
+getVoxelSize(width, height, depth, unit);
+
 run("Stack to Images");
 
 
@@ -60,7 +63,7 @@ selectWindow(nucleusStaining);
 
 run("Subtract Background...", "rolling=50");
 //run("Enhance Contrast", "saturated=0.1");
-run("Enhance Local Contrast (CLAHE)", "blocksize=30 histogram=256 maximum=3 mask=*None* fast_(less_accurate)");
+run("Enhance Local Contrast (CLAHE)", "blocksize=" + BlockSize + " histogram=" + HistogramBins + " maximum=" + MaximumSlope + " mask=*None* fast_(less_accurate)");
 run("Apply LUT");
 
 run("Duplicate...", " ");
@@ -113,7 +116,7 @@ for(i = 0; i < listImagesRenamedToTreat.length; i++)
 	run("Subtract Background...", "rolling=50");
 	//run("Enhance Contrast", "saturated=0.1");
 	
-	run("Enhance Local Contrast (CLAHE)", "blocksize=30 histogram=256 maximum=3 mask=*None* fast_(less_accurate)");
+	run("Enhance Local Contrast (CLAHE)", "blocksize=" + BlockSize + " histogram=" + HistogramBins + " maximum=" + MaximumSlope + " mask=*None* fast_(less_accurate)");
 	
 	run("Apply LUT");
 	
@@ -144,9 +147,11 @@ roiManager("Save", FolderToUse + "/output/" + FileToImport + "_ROI-set.zip");
 if(listImagesRenamed.length <= 7)
 {
 	run("Merge Channels...", options + " create");
+	setVoxelSize(width, height, depth, unit);
 	run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_corrected_composite.tif" + "] compression=LZW");
 
 	run("RGB Color");
+	setVoxelSize(width, height, depth, unit);
 	run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_corrected_RGB.tif" + "] compression=LZW");
 
 } else
@@ -157,6 +162,7 @@ if(listImagesRenamed.length <= 7)
 		var currentImage = listImagesRenamed[i];
 		selectWindow(currentImage);
 		run("RGB Color");
+		setVoxelSize(width, height, depth, unit);
 		run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_" + currentImage + "_corrected_RGB.tif" + "] compression=LZW");
 	}
 

@@ -4,12 +4,26 @@
 \alias{runMacro_analyzeROI}
 \title{Analyze ROI}
 \usage{
-runMacro_analyzeROI(imageJPath, wd, sigmaLow, sigmaHigh)
+runMacro_analyzeROI(
+  imageJPath,
+  wd,
+  blockSize = 30,
+  histogramBins = 256,
+  maximumSlope = 3,
+  sigmaLow,
+  sigmaHigh
+)
 }
 \arguments{
 \item{imageJPath}{The absolute path where the ImageJ executable is located.}
 
 \item{wd}{The workspace directory root path.}
+
+\item{blockSize}{A numeric value which represents the block size to use for the CLAHE algorithm.}
+
+\item{histogramBins}{A numeric value which represents the histogram bins to use for the CLAHE algorithm.}
+
+\item{maximumSlope}{A numeric value which represents the maximum slope to use for the CLAHE algorithm.}
 
 \item{sigmaLow}{A numeric value which represents the lowest sigma value to use for cell contouring.}
 

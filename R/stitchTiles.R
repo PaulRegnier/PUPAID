@@ -1,4 +1,4 @@
-#' Stitch tiles
+#' Stitch tiles from all ROI
 #'
 #' This function stitches in ImageJ all the tiles found in the `2_renameAndOrderTiles > output` directory (each ROI separately). The stitched ROI will be generated in the `3_stitchedTiles` directory, as well as a single text file per ROI containing the tile configuration used during stitching. The function also outputs a rds file containing the determined ROI and their characteristics (height, width, number of total tiles, number of missing tiles, etc.).
 #'

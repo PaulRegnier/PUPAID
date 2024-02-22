@@ -6,13 +6,19 @@
 #'
 #' @param wd The workspace directory root path.
 #'
+#' @param blockSize A numeric value which represents the block size to use for the CLAHE algorithm.
+#'
+#' @param histogramBins A numeric value which represents the histogram bins to use for the CLAHE algorithm.
+#'
+#' @param maximumSlope A numeric value which represents the maximum slope to use for the CLAHE algorithm.
+#'
 #' @param sigmaLow A numeric value which represents the lowest sigma value to use for cell contouring.
 #'
 #' @param sigmaHigh A numeric value which represents the highest sigma value to use for cell contouring.
 #'
 #' @export
 
-runMacro_analyzeROI = function(imageJPath, wd, sigmaLow, sigmaHigh)
+runMacro_analyzeROI = function(imageJPath, wd, blockSize = 30, histogramBins = 256, maximumSlope = 3, sigmaLow, sigmaHigh)
 {
   file.copy(system.file("5_analyzeROI.txt", package = "PUPAID"), file.path("macros", "5_analyzeROI_run.txt"), overwrite = TRUE)
 
@@ -22,11 +28,14 @@ runMacro_analyzeROI = function(imageJPath, wd, sigmaLow, sigmaHigh)
 
   fileConn<-file(file.path("macros", "5_analyzeROI_run.txt"))
   writeLines(c(paste("var FolderToUse = \"", file.path(wd, "5_analyzeROI"), "\";\n", sep = ""),
+               paste("var BlockSize = \"", blockSize, "\";\n", sep = ""),
+               paste("var HistogramBins = \"", histogramBins, "\";\n", sep = ""),
+               paste("var MaximumSlope = \"", maximumSlope, "\";\n", sep = ""),
                paste("var SigmaLow = \"", sigmaLow, "\";\n", sep = ""),
                paste("var SigmaHigh = \"", sigmaHigh, "\";\n", sep = ""),
                originalMacro), fileConn)
   close(fileConn)
 
   # system(paste(imageJPath, " ", file.path(wd, "macros", "5_analyzeROI_run.txt"), sep = ""), wait = FALSE, invisible = FALSE)
-  system(paste(imageJPath), wait = FALSE)
+  # system(paste(imageJPath), wait = FALSE)
 }

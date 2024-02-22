@@ -2,7 +2,7 @@
 % Please edit documentation in R/stitchTiles.R
 \name{stitchTiles}
 \alias{stitchTiles}
-\title{Stitch tiles}
+\title{Stitch tiles from all ROI}
 \usage{
 stitchTiles(
   renameAndOrderOutput = renameAndOrderOutput,
