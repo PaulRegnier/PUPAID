@@ -38,9 +38,9 @@ for (i = 0; i < channelCount; i++)
 
 }
 
-FileToExport = replace(FileToImport, "\\.tif", "")
+FileToExport = replace(FileToImport, "\\.tf2", "")
 
-//run("Bio-Formats Exporter", "save=[" + FolderToUse + "/1_generateBlackTile/output/" + FileToExport + "_blackTile.tif" + "] compression=LZW");
-run("Bio-Formats Exporter", "save=[" + FolderToUse + "/1_generateBlackTile/output/blackTile.tif" + "] compression=LZW");
+//run("Bio-Formats Exporter", "save=[" + FolderToUse + "/1_generateBlackTile/output/" + FileToExport + "_blackTile.tf2" + "] compression=LZW");
+run("Bio-Formats Exporter", "save=[" + FolderToUse + "/1_generateBlackTile/output/blackTile.tf2" + "] compression=LZW");
 
 run("Close All");

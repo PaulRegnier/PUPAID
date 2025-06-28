@@ -82,7 +82,7 @@ run("Flatten");
 setVoxelSize(width, height, depth, unit);
 
 
-run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_sigmaLow=" + SigmaLow + "_sigmaHigh=" + SigmaHigh + ".tif" + "] compression=LZW");
+run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_sigmaLow=" + SigmaLow + "_sigmaHigh=" + SigmaHigh + ".tf2" + "] compression=LZW");
 
 list = getList("window.titles");
 

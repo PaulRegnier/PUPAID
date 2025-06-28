@@ -26,6 +26,6 @@ run("Grid/Collection stitching", "type=[Grid: column-by-column] order=[Down & Ri
 setVoxelSize(width, height, depth, unit);
 
 
-run("Bio-Formats Exporter", "save=[" + currentFolderPath + "/" + currentSampleName + currentROI + ".tif" + "] compression=LZW");
+run("Bio-Formats Exporter", "save=[" + currentFolderPath + "/" + currentSampleName + currentROI + ".tf2" + "] compression=LZW");
 
 close();

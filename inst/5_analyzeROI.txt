@@ -148,11 +148,11 @@ if(listImagesRenamed.length <= 7)
 {
 	run("Merge Channels...", options + " create");
 	setVoxelSize(width, height, depth, unit);
-	run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_corrected_composite.tif" + "] compression=LZW");
+	run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_corrected_composite.tf2" + "] compression=LZW");
 
 	run("RGB Color");
 	setVoxelSize(width, height, depth, unit);
-	run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_corrected_RGB.tif" + "] compression=LZW");
+	run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_corrected_RGB.tf2" + "] compression=LZW");
 
 } else
 {
@@ -163,7 +163,7 @@ if(listImagesRenamed.length <= 7)
 		selectWindow(currentImage);
 		run("RGB Color");
 		setVoxelSize(width, height, depth, unit);
-		run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_" + currentImage + "_corrected_RGB.tif" + "] compression=LZW");
+		run("Bio-Formats Exporter", "save=[" + FolderToUse + "/output/" + FileToImport + "_" + currentImage + "_corrected_RGB.tf2" + "] compression=LZW");
 	}
 
 }
